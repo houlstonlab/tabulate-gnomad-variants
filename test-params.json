@@ -1,0 +1,4 @@
+{
+    "gnomad_files"  : "$SCRATCH/toy-datasets/vcf-gnomad/gnomad.exomes.v4.1.sites.*.vcf.bgz{,.tbi}",
+    "clinvar_files" : "$REFS/NCBI/ClinVar/GRCh38/*_20200520.vcf.gz{,.tbi}"
+}
