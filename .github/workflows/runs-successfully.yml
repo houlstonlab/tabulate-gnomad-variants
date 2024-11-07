@@ -15,7 +15,7 @@ on:
 jobs:
   try-run:
     name: Try running the pipeline
-    runs-on: ubuntu-20.04-16core
+    runs-on: ubuntu-20.04-8core
     steps:
       - name: Set up Python
         uses: actions/setup-python@v5
