@@ -7,17 +7,20 @@
 #SBATCH -t 120:00:00
 
 # Setup test directory
-mkdir -p test/
+mkdir -p test/ test/input
 cd test/
 
-# Load required modules
-module load Nextflow/24.04.2
+# Download test data
+URL="https://raw.githubusercontent.com/houlstonlab/toy-datasets/refs/heads/main/vcf-references/"
+for file in gnomad.v4.vcf.gz gnomad.v4.vcf.gz.tbi clinvar.20200520.vcf.gz clinvar.20200520.vcf.gz.tbi; do
+    wget -c -O input/$file $URL/$file
+done
 
 # Run nextflow
-# nextflow run houlstonlab/tabulate-gnomad-variants -r main \
+# nextflow run houlstonlab/test-gene-burden -r main \
 nextflow run ../main.nf \
     --output_dir ./results/ \
-    -profile local,test \
+    -profile local,gha \
     -resume
 
 # usage: nextflow run [ local_dir/main.nf | git_url ]  
