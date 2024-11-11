@@ -11,10 +11,12 @@ mkdir -p test/ test/input
 cd test/
 
 # Download test data
-URL="https://raw.githubusercontent.com/houlstonlab/toy-datasets/refs/heads/main/vcf-references/"
-for file in gnomad.v4.vcf.gz gnomad.v4.vcf.gz.tbi clinvar.20200520.vcf.gz clinvar.20200520.vcf.gz.tbi; do
-    wget -c -O input/$file $URL/$file
-done
+URL="https://figshare.com/ndownloader/files"
+
+wget -c $URL/50357535 -O input/gnomad.v4.vcf.gz
+wget -c $URL/50357526 -O input/gnomad.v4.vcf.gz.tbi
+wget -c $URL/50357532 -O input/clinvar.20200520.vcf.gz
+wget -c $URL/50357529 -O input/clinvar.20200520.vcf.gz.tbi
 
 # Run nextflow
 # nextflow run houlstonlab/test-gene-burden -r main \
