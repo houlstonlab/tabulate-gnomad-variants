@@ -38,7 +38,7 @@ process CLINVAR {
 
         bcftools query -f 'chr%ID\n' ${chrom}.${category}.vcf.gz > ${chrom}.${category}.txt
         """
-    } else if ( category == 'Damaging' || category == 'Splicing' ) {
+    } else if ( category != 'Pathogenic' ) {
         """
         #!/bin/bash
         # Create bed file

@@ -18,8 +18,11 @@ wget -c $URL/50357526 -O input/gnomad.v4.vcf.gz.tbi
 wget -c $URL/50357532 -O input/clinvar.20200520.vcf.gz
 wget -c $URL/50357529 -O input/clinvar.20200520.vcf.gz.tbi
 
+# Load required modules
+module load Nextflow
+
 # Run nextflow
-# nextflow run houlstonlab/test-gene-burden -r main \
+# nextflow run houlstonlab/tabulate-gnomad-variants -r main \
 nextflow run ../main.nf \
     --output_dir ./results/ \
     -profile local,gha \
