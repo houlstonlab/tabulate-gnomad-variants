@@ -15,6 +15,10 @@ genes_coords_ch =  Channel.of (1 .. 22, 'X', 'Y')
     | map { [ "chr${it}", params.genome, params.style ] }
 
 gnomad_ch = Channel.fromFilePairs(params.gnomad_files, flat: true)
+    | map { it ->
+        def key = it[0].split('\\.')[-1]
+        [key, it[1], it[2]]
+    }
 
 clinvar_ch = Channel.fromFilePairs(params.clinvar_files, flat: true)
 
@@ -31,7 +35,7 @@ workflow  {
 
     // Filter gnomad variants
     gnomad_ch
-        | combine(COORDINATES.out)
+        | combine(COORDINATES.out, by: 0)
         | SUBSET
         | combine(category_ch)
         | map { [it[0], it[3], it[1], it[2]] }

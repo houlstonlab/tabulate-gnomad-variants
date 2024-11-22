@@ -8,8 +8,8 @@ process SUBSET {
     publishDir("${params.output_dir}/subsets/", mode: 'copy')
 
     input:
-    tuple val(gnomad), path(gnomad_file), path(gnomad_index),
-          val(chrom), path(gene_coords)
+    tuple val(chrom), path(gnomad_file), path(gnomad_index),
+          path(gene_coords)
 
     output:
     tuple val(chrom),

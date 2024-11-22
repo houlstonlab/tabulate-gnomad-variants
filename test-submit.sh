@@ -13,10 +13,20 @@ cd test/
 # Download test data
 URL="https://figshare.com/ndownloader/files"
 
-wget -c $URL/50357535 -O input/gnomad.v4.vcf.gz
-wget -c $URL/50357526 -O input/gnomad.v4.vcf.gz.tbi
+wget -c $URL/50357535 -O input/combined.gnomad.v4.vcf.gz
+wget -c $URL/50357526 -O input/combined.gnomad.v4.vcf.gz.tbi
 wget -c $URL/50357532 -O input/clinvar.20200520.vcf.gz
 wget -c $URL/50357529 -O input/clinvar.20200520.vcf.gz.tbi
+
+# Split the VCF by chromosome
+module load BCFtools
+tabix -f -p vcf input/combined.gnomad.v4.vcf.gz
+CHROMOSOMES=({1..22} X Y)
+for CHR in "${CHROMOSOMES[@]}"; do
+    echo "Processing chromosome ${CHR}..."
+    bcftools view -r ${CHR} input/combined.gnomad.v4.vcf.gz -Oz -o input/gnomad.chr${CHR}.vcf.gz
+    tabix -p vcf input/gnomad.chr${CHR}.vcf.gz
+done
 
 # Load required modules
 module load Nextflow
