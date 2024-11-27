@@ -48,6 +48,48 @@ process FILTER {
 
         bcftools query -f '%ID\n' ${chrom}.${category}.vcf.gz > ${chrom}.${category}.tsv
         """
+    } else if ( category == 'High' ) {
+        """
+        #!/bin/bash
+        # Filter gnomad
+        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
+        bcftools view -i 'IMPACT="HIGH"' | \
+        bcftools view -e ID==@${benign_file} | \
+        bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
+
+        tabix ${chrom}.${category}.vcf.gz
+
+        bcftools query -f '%ID\n' ${chrom}.${category}.vcf.gz > ${chrom}.${category}.tsv
+        """
+    } else if ( category == 'Stop' ) {
+        """
+        #!/bin/bash
+        # Filter gnomad
+        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools +split-vep -a vep -s worst -c Consequence,IMPACT,LoF | \
+        bcftools view -i 'Consequence~"stop_gained"' | \
+        bcftools view -e ID==@${benign_file} | \
+        bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
+
+        tabix ${chrom}.${category}.vcf.gz
+
+        bcftools query -f '%ID\n' ${chrom}.${category}.vcf.gz > ${chrom}.${category}.tsv
+        """
+    } else if ( category == 'PTV' ) {
+        """
+        #!/bin/bash
+        # Filter gnomad
+        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools +split-vep -a vep -s worst -c Consequence,IMPACT,LoF | \
+        bcftools view -i 'Consequence~"stop_gained" || Consequence~"frameshift_variant" || Consequence~"splice_acceptor_variant"' | \
+        bcftools view -e ID==@${benign_file} | \
+        bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
+
+        tabix ${chrom}.${category}.vcf.gz
+
+        bcftools query -f '%ID\n' ${chrom}.${category}.vcf.gz > ${chrom}.${category}.tsv
+        """
     } else if ( category == 'Scored' ) {
         """
         #!/bin/bash

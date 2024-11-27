@@ -23,7 +23,9 @@ gnomad_ch = Channel.fromFilePairs(params.gnomad_files, flat: true)
 
 clinvar_ch = Channel.fromFilePairs(params.clinvar_files, flat: true)
 
-category_ch = Channel.of( 'Pathogenic', 'Damaging', 'Splicing', 'NotScored', 'Scored' )
+category_ch = Channel.of( 'Pathogenic', 'Damaging', 'Splicing',
+                        //   'NotScored', 'Scored',
+                          'High', 'PTV', 'Stop' )
 clinvar_category_ch = Channel.of( 'Pathogenic', 'Benign' )
 variables_ch = Channel.of( 'frequency' )
 
