@@ -24,6 +24,7 @@ gnomad_ch = Channel.fromFilePairs(params.gnomad_files, flat: true)
 clinvar_ch = Channel.fromFilePairs(params.clinvar_files, flat: true)
 
 category_ch = Channel.of( 'Pathogenic', 'Damaging', 'Splicing', 'NotScored', 'Scored' )
+clinvar_category_ch = Channel.of( 'Pathogenic', 'Benign' )
 variables_ch = Channel.of( 'frequency' )
 
 workflow  {
@@ -31,16 +32,21 @@ workflow  {
     genes_coords_ch
         | COORDINATES
         | combine(clinvar_ch)
-        | combine(category_ch)
+        | combine(clinvar_category_ch)
         | CLINVAR
+        | branch {
+            pathogenic: it[1] == 'Pathogenic'
+            benign: it[1] == 'Benign'
+        }
+        | set { clinvar }
 
-    // Filter gnomad variants
+    // // Filter gnomad variants
     gnomad_ch
         | combine(COORDINATES.out, by: 0)
         | SUBSET
         | combine(category_ch)
-        | map { [it[0], it[3], it[1], it[2]] }
-        | combine(CLINVAR.out, by: [0, 1])
+        | combine(clinvar.pathogenic, by: 0)
+        | combine(clinvar.benign, by: 0)
         | FILTER
         | groupTuple(by: 1)
         | COMBINE
@@ -56,6 +62,8 @@ workflow  {
     frequency.cat 
         | concat(frequency.all)
         | filter { it[1] == 'frequency' }
+        | groupTuple(by: [0,1])
+        | view
         | AGGREGATE
 
     // Generate report

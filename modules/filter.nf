@@ -8,9 +8,10 @@ process FILTER {
     publishDir("${params.output_dir}/filtered/", mode: 'copy')
 
     input:
-    tuple val(chrom), val(category),
-          path(gnomad_file), path(gnomad_index),
-          path(clinvar_file)
+    tuple val(chrom), path(gnomad_file), path(gnomad_index),
+          val(category),
+          val(pathogenic), path(pathogenic_file),
+          val(benign), path(benign_file)
           
 
     output:
@@ -25,7 +26,7 @@ process FILTER {
         #!/bin/bash
         # Filter gnomad
         bcftools view -e 'AF_grpmax > 0.01 || AF_nfe > 0.01' ${gnomad_file} | \
-        bcftools view -i ID==@${clinvar_file} | \
+        bcftools view -i ID==@${pathogenic_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
         tabix ${chrom}.${category}.vcf.gz
@@ -40,7 +41,7 @@ process FILTER {
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH"' | \
         bcftools view -i 'LoF="HC"' | \
-        bcftools view -e ID==@${clinvar_file} | \
+        bcftools view -e ID==@${benign_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
         tabix ${chrom}.${category}.vcf.gz
@@ -55,7 +56,7 @@ process FILTER {
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH" || IMPACT="MODERATE"' | \
         bcftools view -i 'LoF="HC"' | \
-        bcftools view -e ID==@${clinvar_file} | \
+        bcftools view -e ID==@${benign_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
         tabix ${chrom}.${category}.vcf.gz
@@ -69,7 +70,7 @@ process FILTER {
         bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH" || IMPACT="MODERATE"' | \
-        bcftools view -e ID==@${clinvar_file} | \
+        bcftools view -e ID==@${benign_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
         tabix ${chrom}.${category}.vcf.gz
@@ -82,7 +83,7 @@ process FILTER {
         # Filter gnomad
         bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
         bcftools view -i 'spliceai_ds_max > 0.8'  | \
-        bcftools view -e ID==@${clinvar_file} | \
+        bcftools view -e ID==@${benign_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
         tabix ${chrom}.${category}.vcf.gz
