@@ -25,7 +25,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.01 || AF_nfe > 0.01' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.PAF_MAX} || AF_nfe > ${params.PAF}' ${gnomad_file} | \
         bcftools view -i ID==@${pathogenic_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 
@@ -37,7 +37,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH"' | \
         bcftools view -i 'LoF="HC"' | \
@@ -52,7 +52,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH"' | \
         bcftools view -e ID==@${benign_file} | \
@@ -66,7 +66,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c Consequence,IMPACT,LoF | \
         bcftools view -i 'Consequence~"stop_gained"' | \
         bcftools view -e ID==@${benign_file} | \
@@ -80,7 +80,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c Consequence,IMPACT,LoF | \
         bcftools view -i 'Consequence~"stop_gained" || Consequence~"frameshift_variant" || Consequence~"splice_acceptor_variant"' | \
         bcftools view -e ID==@${benign_file} | \
@@ -94,7 +94,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH" || IMPACT="MODERATE"' | \
         bcftools view -i 'LoF="HC"' | \
@@ -109,7 +109,7 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
         bcftools +split-vep -a vep -s worst -c IMPACT,LoF | \
         bcftools view -i 'IMPACT="HIGH" || IMPACT="MODERATE"' | \
         bcftools view -e ID==@${benign_file} | \
@@ -123,8 +123,8 @@ process FILTER {
         """
         #!/bin/bash
         # Filter gnomad
-        bcftools view -e 'AF_grpmax > 0.005 || AF_nfe > 0.005' ${gnomad_file} | \
-        bcftools view -i 'spliceai_ds_max > 0.8'  | \
+        bcftools view -e 'AF_grpmax > ${params.AF_MAX} || AF_nfe > ${params.AF}' ${gnomad_file} | \
+        bcftools view -i 'spliceai_ds_max > ${params.DS}'  | \
         bcftools view -e ID==@${benign_file} | \
         bcftools view --threads ${task.cpu} -Oz -o ${chrom}.${category}.vcf.gz
 

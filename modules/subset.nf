@@ -25,7 +25,7 @@ process SUBSET {
 
     # Subset gnomad
     bcftools view -R region.bed ${gnomad_file} | \
-    bcftools view -i 'AC_nfe > 0' | \
+    bcftools view -i 'AC_nfe > ${params.AC}' | \
     bcftools annotate --set-id '%CHROM:%POS:%REF:%ALT' | \
     bcftools view --threads ${task.cpu} -Oz -o ${chrom}.vcf.gz
 
