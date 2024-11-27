@@ -1,5 +1,5 @@
 process REPORT {
-    tag "${chrom}:${category}"
+    tag "${category}"
 
     label 'simple'
 
