@@ -8,19 +8,19 @@ process REPORT {
     publishDir("${params.output_dir}/reports", mode: 'copy')
 
     input:
-    tuple val(chrom), val(category), 
+    tuple val(category), 
           path(file), path(index), path(variants)
 
     output:
-    tuple val(chrom), val(category), val("report"),
-          path("${chrom}.${category}.report.tsv")
+    tuple val(category), val("report"),
+          path("${category}.report.tsv")
 
     script:
     """
     #!/bin/bash
     calculate_stats.sh \
-        ${chrom} ${category} \
+        ${category} \
         ${file} \
-        > ${chrom}.${category}.report.tsv
+        > ${category}.report.tsv
     """
 }

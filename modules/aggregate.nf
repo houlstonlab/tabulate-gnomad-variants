@@ -3,19 +3,19 @@ process AGGREGATE {
 
     label 'simple'
 
-    publishDir("${params.output_dir}/aggregated", mode: 'copy')
+    publishDir("${params.output_dir}/aggregate", mode: 'copy')
 
     input:
-    tuple val(chrom), val(category), val(variable), path(file)
+    tuple val(category), val(variable), path(file)
 
     output:
-    tuple val(chrom), val(category), val("aggregate"),
-          path("${chrom}.${category}.aggregate.tsv")
+    tuple val(category), val("aggregate"),
+          path("gnomad.${category}.aggregate.tsv")
  
     script:
     """
     #!/bin/bash
-    echo -e "gene\tnvar\tac\tan\taf\tnhom" > ${chrom}.${category}.aggregate.tsv
+    echo -e "gene\tnvar\tac\tan\taf\tnhom" > gnomad.${category}.aggregate.tsv
     cat ${file} | \
     sort -u | \
     awk '
@@ -42,6 +42,6 @@ process AGGREGATE {
         }
     }
     ' \
-    >> ${chrom}.${category}.aggregate.tsv
+    >> gnomad.${category}.aggregate.tsv
     """
 }

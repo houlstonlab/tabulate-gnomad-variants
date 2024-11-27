@@ -5,6 +5,7 @@ nextflow.enable.dsl=2
 include { COORDINATES } from './modules/coordinates.nf'
 include { SUBSET }      from './modules/subset.nf'
 include { FILTER }      from './modules/filter.nf'
+include { COMBINE }     from './modules/combine.nf'
 include { EXTRACT }     from './modules/extract.nf'
 include { AGGREGATE }   from './modules/aggregate.nf'
 include { REPORT }      from './modules/report.nf'
@@ -41,29 +42,22 @@ workflow  {
         | map { [it[0], it[3], it[1], it[2]] }
         | combine(CLINVAR.out, by: [0, 1])
         | FILTER
+        | groupTuple(by: 1)
+        | COMBINE
         | combine(variables_ch)
         | EXTRACT
         | multiMap { it ->
             cat: it
-            all: [it[0], 'ALL', it[2], it[3]]
+            all: ['ALL', it[1], it[2]]
         }
         | set { frequency }
 
     // Aggregate by category, and ALL
     frequency.cat 
         | concat(frequency.all)
-        | filter { it[2] == 'frequency' }
+        | filter { it[1] == 'frequency' }
         | AGGREGATE
 
     // Generate report
-    FILTER.out | REPORT   
-    
-    // Collect and store results
-    AGGREGATE.out
-        | concat(REPORT.out)
-        | collectFile (
-            keepHeader: true,
-            storeDir: "${params.output_dir}/summary",
-        )
-        { it -> [ "gnomad.${it[1]}.${it[2]}.tsv", it.last() ] } 
+    COMBINE.out | REPORT   
 }

@@ -1,7 +1,6 @@
 #!/bin/bash
-chrom=$1
-category=$2
-file=$3
+category=$1
+file=$2
 
 # Annotations: AF_grpmax AF_nfe spliceai_ds_max
 # AF_grpmax=$( bcftools query -f "%AF_grpmax\n" ${file} | awk '{print $1 + 0}' | grep -v '^0$' | sort -uV | tail -1 )
@@ -36,7 +35,7 @@ AF_nfe=$(get_val "%AF_nfe\n" ${file} "max")
 spliceai_ds_max=$(get_val "%spliceai_ds_max\n" ${file} "min") 
 
 # Print headers
-echo -e "Chrom\tCategory\tAF_grpmax\tAF_nfe\tspliceai_ds_max"
+echo -e "Category\tAF_grpmax\tAF_nfe\tspliceai_ds_max"
 
 # Print values
-echo -e "$chrom\t$category\t$AF_grpmax\t$AF_nfe\t$spliceai_ds_max"
+echo -e "$category\t$AF_grpmax\t$AF_nfe\t$spliceai_ds_max"
