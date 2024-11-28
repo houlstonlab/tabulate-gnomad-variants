@@ -27,7 +27,7 @@ process CLINVAR {
         # Filter clinvar
         bcftools view \
             -R region.bed \
-            -i 'ORIGIN="1" && (CLNSIG~"Pathogenic" || CLNSIG~"Likely_pathogenic")' \
+            -i '(CLNSIG~"Pathogenic" || CLNSIG~"Likely_pathogenic")' \
             ${clinvar_file} | \
         bcftools annotate \
             --set-id '%CHROM:%POS:%REF:%ALT' | \
@@ -48,7 +48,7 @@ process CLINVAR {
         # Filter clinvar
         bcftools view \
             -R region.bed \
-            -i 'ORIGIN="1" && (CLNSIG~"Benign" || CLNSIG~"Likely_benign")' \
+            -i '(CLNSIG~"Benign" || CLNSIG~"Likely_benign")' \
             ${clinvar_file} | \
         bcftools annotate \
             --set-id '%CHROM:%POS:%REF:%ALT' | \
