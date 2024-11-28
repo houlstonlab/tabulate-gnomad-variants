@@ -65,7 +65,6 @@ workflow  {
         | concat(frequency.all)
         | filter { it[1] == 'frequency' }
         | groupTuple(by: [0,1])
-        | view
         | AGGREGATE
 
     // Generate report
