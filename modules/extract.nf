@@ -23,9 +23,9 @@ process EXTRACT {
         # Get frequency
         bcftools +split-vep \
             -a vep \
-            -c SYMBOL \
+            -c Gene \
             -s worst \
-            -f '%SYMBOL\t%CHROM:%POS:%REF:%ALT\t%AC_nfe\t%AN_nfe\t%AF_nfe\t%nhomalt_nfe\n' \
+            -f '%Gene\t%CHROM:%POS:%REF:%ALT\t%AC_nfe\t%AN_nfe\t%AF_nfe\t%nhomalt_nfe\n' \
             ${file} \
             > ${category}.${variable}.tsv
         """
