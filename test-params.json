@@ -1,4 +1,4 @@
 {
-    "gnomad_files"  : "$TOY_DATASETS/vcf-references/gnomad.chrom/gnomad.*.vcf.gz{,.tbi}",
+    "gnomad_files"  : "$TOY_DATASETS/vcf-references/cohorts_info.csv",
     "clinvar_files" : "$TOY_DATASETS/vcf-references/*.20200520.vcf.gz{,.tbi}"
 }

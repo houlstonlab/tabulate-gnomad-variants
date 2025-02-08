@@ -12,18 +12,32 @@ include { REPORT }      from './modules/report.nf'
 include { CLINVAR }     from './modules/clinvar.nf'
 
 // Define input channels
-genes_coords_ch =  Channel.of (1 .. 22, 'X', 'Y')
-    | map { [ "chr${it}", params.genome, params.style ] }
+// genes_coords_ch =  Channel.of (1 .. 22, 'X', 'Y')
+//     | map { [ "chr${it}", params.genome, params.style ] }
 
-gnomad_ch = Channel.fromFilePairs(params.gnomad_files, flat: true)
-    | map { it ->
-        def key = it[0].split('\\.')[-1]
-        [key, it[1], it[2]]
-    }
+// gnomad_ch = Channel.fromFilePairs(params.gnomad_files, flat: true)
+//     | map { it ->
+//         def key = it[0].split('\\.')[-1]
+//         [key, it[1], it[2]]
+//     }
+gnomad_ch = Channel.fromPath(params.gnomad_files)
+        | splitCsv(header: true, sep: ',')
+        | map { row -> [
+            row.chrom ?: (1..22).collect { "chr$it" } + ['chrX', 'chrY'],
+            file(row.file), file(row.index)
+        ] }
+
+genes_coords_ch = Channel.fromPath(params.gnomad_files)
+    | splitCsv(header: true, sep: ',')
+    | map { row -> [ 
+        row.chrom ?: (1..22).collect { "chr$it" } + ['chrX', 'chrY'],
+        params.genome, params.style
+    ] }
+    | transpose()
 
 clinvar_ch = Channel.fromFilePairs(params.clinvar_files, flat: true)
-category_ch = Channel.of(params.categories.split(','))
 clinvar_category_ch = Channel.of( 'Pathogenic', 'Benign' )
+category_ch = Channel.of(params.categories.split(','))
 variables_ch = Channel.of( 'frequency' )
 
 workflow  {
@@ -39,7 +53,7 @@ workflow  {
         }
         | set { clinvar }
 
-    // // Filter gnomad variants
+    // Filter gnomad variants
     gnomad_ch
         | combine(COORDINATES.out, by: 0)
         | SUBSET
