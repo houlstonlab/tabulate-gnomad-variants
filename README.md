@@ -16,20 +16,33 @@ Different versions of the workflow can be called using `-r` and output directed 
 nextflow run houlstonlab/tabulate-gnomad-variants \
     -r main \
     --output_dir results/ \
-    --gnomad_files input/gnomad.v4.vcf.gz{,.tbi} \
+    --gnomad_files input/cohorts_info.csv \
     --clinvar_files input/clinvar.20200520.vcf.gz{,.tbi} \
 ```
 
 ### Inputs & Parameters
 
-- `gnomad_files`  : a VCF file with GnomAD variants
+- `gnomad_files`  : a csv file with three columns `chrom`, `file`, and `index`
 - `clinvar_files` : a VCF file with ClinVar variants
+
+Other paramters include:
 - `genome`: genome version (default is'hg38') 
 - `style` : chromosome names style 'UCSC' or 'NCBI'
-    
+- `categories`: selection categories. One or more of `'Pathogenic,Damaging,Splicing,High,PTV,Stop'`
+- `AC`      : minimum allele count. Default `> 0`
+- `AF_MAX`  : maximum group allele frequence. Default `> 0.005`
+- `AF`      : maximum allele frequence. Default `> 0.005`
+- `PAF_MAX` : maximum pathogenic variants group allele frequence. Default `> 0.01`
+- `PAF`     : maximum pathogenic variants allele frequence. Default `> 0.01`
+- `DS`      : minimum delta score for spliceAI
+  
 ### Output
 
-- `filtered/`  : filtered variants
-- `frequency/` : the frequency of qualifying variants
-- `aggregated/`: aggregated variant info by gene
-- The final ouput in `summary/` is a tsv file with `gene`, `nvar`, `ac`, `an`, `af`, and `nhom` columns
+- `clinvar/`    : clinvar annotations
+- `coordiantes/`: coding gene coordinates
+- `subsets/`    : split vcf file by chromosome
+- `filtered/`   : filtered vcfs
+- `combined/`   : a combined vcf
+- `variants/`   : extracted variant frequence
+- `aggregate/`  : aggregated variant frequency by gene
+- `reports/`    : summary reports
